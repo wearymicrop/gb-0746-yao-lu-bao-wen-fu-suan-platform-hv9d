@@ -1,0 +1,16 @@
+LABELS = {
+    "BAD_READING": "读数时间、热区或温标无效",
+    "DUPLICATE_READING": "同点重复报送",
+    "READING_CONFLICT": "同区同秒出现不同读数",
+    "OUT_OF_ORDER": "原始报送顺序回退",
+    "BAD_CALIBRATION": "校准记录无效",
+    "CALIBRATION_GAP": "缺少有效校准",
+    "CALIBRATION_OVERLAP": "多张校准单同时生效",
+    "DRIFT_LIMIT": "校准偏移超过限值",
+    "BAD_RECIPE": "配方时间或区温无效",
+    "RECIPE_GAP": "计划内缺少配方",
+    "RECIPE_OVERLAP": "配方版本重叠",
+    "NO_READING": "有效读数失采",
+    "BELOW_TARGET": "热区低于配方温度",
+    "PROVEN": "所需热区均达标",
+}

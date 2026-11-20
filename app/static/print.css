@@ -1,0 +1,31 @@
+@media print {
+  .rail,
+  .tools,
+  .statusbar,
+  form,
+  .run-actions {
+    display: none !important;
+  }
+  .frame,
+  .grid {
+    display: block;
+  }
+  body,
+  .topbar,
+  .panel,
+  .zone-card {
+    background: #fff;
+    color: #111;
+  }
+  .panel {
+    margin-bottom: 12px;
+    break-inside: avoid;
+  }
+  .track,
+  .kpis {
+    print-color-adjust: exact;
+  }
+  .topbar {
+    position: static;
+  }
+}

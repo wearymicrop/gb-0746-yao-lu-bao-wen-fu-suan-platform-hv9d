@@ -7,6 +7,7 @@
 | 读数 `readings` | `zone`、`time`、`unit`、`value` | 原行号从 1 起算。摄氏 C 或华氏 F，转毫摄氏度按四舍五入。相同归一值去重，冲突全隔离 |
 | 校准 `calibrations` | `zone`、`start`、`end`、`offset_mc` | 探头偏移带正负号，须有且仅有一条生效且不超限 |
 | 配方 `recipes` | `version`、`start`、`end`、`target_mc` | 按热区给毫摄氏度阈值，缺版或重叠进入待核 |
+| 更正 `corrections` | `zone`、`start`、`end`、`offset_mc`、`replaces_row`、`received_at`、`reason`、`document` | 只改校准段：`replaces_row` 指向原校准行（从 1 起），不填则追加窗口。依据字段只入证据 |
 
 时间字符串须带偏移并精确到秒，统一保存为 UTC 秒，页面显示上海时间。时窗均为左闭右开。
 读数有效到下次采样、最大沿用时间或校准边界三者最早值。坏读数作为切断点，防止上一次读数跨越坏点。
@@ -14,3 +15,13 @@
 连续段在失温、缺证和配方版本变更时切断。签核放行需连续时长达标且缺证为零。
 JSON 支持 UTF-8 或 UTF-8 BOM。缺列和类型错误保留在隔离记录，空采样数组代表全窗缺证。
 凭证保存规范化 JSON 的摘要，可检查文件完整性。签核人为业务记录字段。
+
+## 迟到更正
+
+更正按到达顺序追加成结论链，原签核凭证只读。每次结论由原炉单、同批读数与全部生效更正从校准段整链重算，不累加上一次时长。
+
+- 身份 `id` 由「原输入摘要 + 规则版本 + 生效更正集合」的摘要决定。同一份更正重复送入、并发重送或复算中断后重试，命中同一身份，返回 `reused: true`，不新增结论、不叠加计时。
+- 同一校准行后到的更正覆盖先到的；追加窗口按热区与起止归并。
+- `status=FORMAL` 才可发布并导出；未对平的结果记为 `status=PENDING`，`approval` 为空，不顶替生效结论，`GET /api/corrections/{id}/export` 返回 409。
+- 每条结论带 `supersedes`（被替换的凭证或上次更正）、`corrections`（采用的更正证据与到达时间）、`diff.before/after`（校准、热区窗口、保温分段、连续段、断档与对账的前后值）。
+- `GET /api/runs/{id}/corrections` 返回原凭证摘要、结论链与当前生效结论。凭证可用 `python -m app.modules.m7_archive.verify` 离线校验。

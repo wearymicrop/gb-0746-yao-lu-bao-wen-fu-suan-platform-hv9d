@@ -15,6 +15,7 @@ from app.modules.m4_soak.handler import router as soak
 from app.modules.m5_gaps.handler import router as gaps
 from app.modules.m6_reconcile.handler import router as reconcile
 from app.modules.m7_archive.handler import router as archive
+from app.modules.m8_correction.handler import router as correction
 
 
 def create_app(db_path=None):
@@ -40,6 +41,7 @@ def create_app(db_path=None):
         gaps,
         reconcile,
         archive,
+        correction,
     ):
         api.include_router(router)
 
